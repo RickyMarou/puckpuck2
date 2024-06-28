@@ -23,6 +23,8 @@ export class Preloader extends Scene {
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath("assets");
 
+    this.load.image("pinkwall", "1x1_hotpink.png");
+
     this.load.spritesheet("pinkstar", "sprites/pinkstar_20_45x45.png", {
       frameWidth: 45,
       frameHeight: 45,

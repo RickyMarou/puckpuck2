@@ -3,17 +3,63 @@ import { Scene, Physics } from "phaser";
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
   background: Phaser.GameObjects.Image;
-  puck: Physics.Arcade.Sprite;
+  puck: Physics.Matter.Sprite;
   msg_text: Phaser.GameObjects.Text;
+  isDragging: boolean;
+  startX: number;
+  startY: number;
+  diffX: number;
+  diffY: number;
 
   constructor() {
     super("Game");
   }
 
   create() {
-    console.log("physics", this.physics);
     this.camera = this.cameras.main;
-    this.puck = this.physics.add.sprite(512, 384, "pinkstar");
+
+    this.puck = this.matter.add.sprite(512, 384, "pinkstar", 0);
+    this.puck.setCircle(16);
+    this.puck.setBounce(0.8);
     this.puck.anims.play("idle");
+    this.puck.setInteractive();
+    this.input.setDraggable(this.puck);
+
+    this.input.on("dragstart", (_, gameObject: any) => {
+      console.log("dragstart", gameObject);
+      if (gameObject === this.puck) {
+        this.isDragging = true;
+        this.startX = gameObject.x;
+        this.startY = gameObject.y;
+        console.log("dragstart", gameObject.x, gameObject.y);
+      }
+    });
+
+    this.input.on("drag", (pointer, gameObject, dragX, dragY) => {
+      if (gameObject === this.puck && this.isDragging) {
+        this.diffX = this.startX - dragX;
+        this.diffY = this.startY - dragY;
+      }
+    });
+
+    this.input.on("dragend", (_, gameObject: any) => {
+      if (gameObject === this.puck) {
+        this.isDragging = false;
+        let velocityX = this.diffX * 0.1;
+        let velocityY = this.diffY * 0.1;
+        this.puck.setVelocity(velocityX, velocityY);
+      }
+    });
+
+    this.matter.add
+      .image(300, 568, "pinkwall")
+      .setScale(500, 32)
+      .setStatic(true)
+      .setAngle(20);
+
+    this.matter.add
+      .image(800, 690, "pinkwall")
+      .setScale(500, 32)
+      .setStatic(true);
   }
 }
