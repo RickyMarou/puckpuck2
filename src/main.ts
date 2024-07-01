@@ -19,8 +19,9 @@ const config: Types.Core.GameConfig = {
   },
   physics: {
     default: "matter",
-    arcade: {
-      gravity: { x: 0, y: 50 },
+    matter: {
+      gravity: { x: 0, y: 0 },
+      setBounds: true,
       debug: true,
     },
   },

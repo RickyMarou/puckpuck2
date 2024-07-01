@@ -23,6 +23,7 @@ export class Game extends Scene {
     this.puck.setCircle(16);
     this.puck.setBounce(0.8);
     this.puck.anims.play("idle");
+    this.puck.setFrictionAir(0.05);
     this.puck.setInteractive();
     this.input.setDraggable(this.puck);
 
@@ -46,16 +47,19 @@ export class Game extends Scene {
       if (gameObject === this.puck && this.isDragging) {
         this.diffX = this.startX - dragX;
         this.diffY = this.startY - dragY;
+        this.camera.zoomTo(0.8, 200);
       }
     });
 
     this.input.on("dragend", (_, gameObject: any) => {
+      console.log("dragend", gameObject === this.puck);
       if (gameObject === this.puck) {
         this.sling.clear();
         this.isDragging = false;
         let velocityX = this.diffX * 0.1;
         let velocityY = this.diffY * 0.1;
         this.puck.setVelocity(velocityX, velocityY);
+        this.camera.zoomTo(1, 200);
       }
     });
 
@@ -63,24 +67,17 @@ export class Game extends Scene {
       .image(300, 568, "pinkwall")
       .setScale(500, 32)
       .setStatic(true)
+      .setBounce(2)
       .setAngle(20);
 
     this.matter.add
       .image(800, 690, "pinkwall")
       .setScale(500, 32)
+      .setBounce(0.1)
       .setStatic(true);
   }
 
   update() {
-    console.log("mouse position", {
-      x: Math.round(this.input.activePointer.x),
-      y: Math.round(this.input.activePointer.y),
-    });
-
-    console.log("puck position", {
-      x: Math.round(this.puck.x),
-      y: Math.round(this.puck.y),
-    });
     if (this.isDragging) {
       console.log("dragging", Math.round(this.puck.x), Math.round(this.puck.y));
       this.sling.clear();
