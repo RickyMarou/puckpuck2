@@ -5,6 +5,7 @@ export class Game extends Scene {
   background: Phaser.GameObjects.Image;
   puck: Physics.Matter.Sprite;
   msg_text: Phaser.GameObjects.Text;
+  sling: Phaser.GameObjects.Graphics;
   isDragging: boolean;
   startX: number;
   startY: number;
@@ -25,6 +26,12 @@ export class Game extends Scene {
     this.puck.setInteractive();
     this.input.setDraggable(this.puck);
 
+    this.camera.startFollow(this.puck);
+
+    this.sling = this.add.graphics({
+      lineStyle: { width: 4, color: 0xff0000 },
+    });
+
     this.input.on("dragstart", (_, gameObject: any) => {
       console.log("dragstart", gameObject);
       if (gameObject === this.puck) {
@@ -44,6 +51,7 @@ export class Game extends Scene {
 
     this.input.on("dragend", (_, gameObject: any) => {
       if (gameObject === this.puck) {
+        this.sling.clear();
         this.isDragging = false;
         let velocityX = this.diffX * 0.1;
         let velocityY = this.diffY * 0.1;
@@ -61,5 +69,27 @@ export class Game extends Scene {
       .image(800, 690, "pinkwall")
       .setScale(500, 32)
       .setStatic(true);
+  }
+
+  update() {
+    console.log("mouse position", {
+      x: Math.round(this.input.activePointer.x),
+      y: Math.round(this.input.activePointer.y),
+    });
+
+    console.log("puck position", {
+      x: Math.round(this.puck.x),
+      y: Math.round(this.puck.y),
+    });
+    if (this.isDragging) {
+      console.log("dragging", Math.round(this.puck.x), Math.round(this.puck.y));
+      this.sling.clear();
+      this.sling.lineBetween(
+        Math.round(this.puck.x),
+        Math.round(this.puck.y),
+        Math.round(this.camera.scrollX + this.input.activePointer.x),
+        Math.round(this.camera.scrollY + this.input.activePointer.y)
+      );
+    }
   }
 }
