@@ -47,19 +47,19 @@ export class Game extends Scene {
       if (gameObject === this.puck && this.isDragging) {
         this.diffX = this.startX - dragX;
         this.diffY = this.startY - dragY;
-        this.camera.zoomTo(0.8, 200);
+        this.camera.zoomTo(0.6, 800, Phaser.Math.Easing.Cubic.InOut, true);
       }
     });
 
     this.input.on("dragend", (_, gameObject: any) => {
-      console.log("dragend", gameObject === this.puck);
       if (gameObject === this.puck) {
         this.sling.clear();
         this.isDragging = false;
         let velocityX = this.diffX * 0.1;
         let velocityY = this.diffY * 0.1;
         this.puck.setVelocity(velocityX, velocityY);
-        this.camera.zoomTo(1, 200);
+        console.log("dragend");
+        this.camera.zoomTo(1, 400, Phaser.Math.Easing.Cubic.Out, true);
       }
     });
 
@@ -79,7 +79,6 @@ export class Game extends Scene {
 
   update() {
     if (this.isDragging) {
-      console.log("dragging", Math.round(this.puck.x), Math.round(this.puck.y));
       this.sling.clear();
       this.sling.lineBetween(
         Math.round(this.puck.x),
