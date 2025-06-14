@@ -29,17 +29,24 @@ export class Game extends Scene {
       | undefined;
 
     if (!importedTrack) {
-      throw new Error(
-        "No SVG track provided. Please import an SVG track file.",
+      this.showErrorMessage(
+        "No SVG track provided.\nPlease import an SVG track file.",
       );
+      return;
     }
 
-    this.setupImportedTrack(importedTrack);
-
-    this.setupPuck();
-    this.setupCamera();
-    this.setupSlingshot();
-    this.setupInput();
+    try {
+      this.setupImportedTrack(importedTrack);
+      this.setupPuck();
+      this.setupCamera();
+      this.setupSlingshot();
+      this.setupInput();
+    } catch (error) {
+      console.error("Failed to setup game:", error);
+      this.showErrorMessage(
+        `Failed to load track:\n${error}\n\nPlease try importing a different SVG file.`,
+      );
+    }
   }
 
   private setupImportedTrack(track: ImportedTrack) {
@@ -83,7 +90,8 @@ export class Game extends Scene {
       console.log("Imported track loaded successfully");
     } catch (error) {
       console.error("Failed to load imported track:", error);
-      throw new Error(`Failed to load SVG track: ${error}`);
+      // Re-throw to be caught by create() method
+      throw error;
     }
   }
 
@@ -210,5 +218,62 @@ export class Game extends Scene {
         Math.round(this.camera.scrollY + this.input.activePointer.y),
       );
     }
+  }
+
+  private showErrorMessage(message: string) {
+    // Create a dark overlay
+    const overlay = this.add.graphics();
+    overlay.fillStyle(0x000000, 0.8);
+    overlay.fillRect(0, 0, this.cameras.main.width, this.cameras.main.height);
+    overlay.setScrollFactor(0); // Keep overlay fixed to camera
+
+    // Create error message text
+    const errorText = this.add.text(
+      this.cameras.main.centerX,
+      this.cameras.main.centerY - 50,
+      message,
+      {
+        fontSize: "24px",
+        color: "#ff4444",
+        align: "center",
+        fontFamily: "Arial",
+        stroke: "#000000",
+        strokeThickness: 2,
+      },
+    );
+    errorText.setOrigin(0.5);
+    errorText.setScrollFactor(0);
+
+    // Create "Back to Menu" button
+    const buttonText = this.add.text(
+      this.cameras.main.centerX,
+      this.cameras.main.centerY + 100,
+      "Back to Menu",
+      {
+        fontSize: "20px",
+        color: "#ffffff",
+        backgroundColor: "#4444ff",
+        padding: { x: 20, y: 10 },
+        align: "center",
+        fontFamily: "Arial",
+      },
+    );
+    buttonText.setOrigin(0.5);
+    buttonText.setScrollFactor(0);
+    buttonText.setInteractive({ useHandCursor: true });
+
+    // Add button hover effects
+    buttonText.on("pointerover", () => {
+      buttonText.setStyle({ backgroundColor: "#6666ff" });
+    });
+
+    buttonText.on("pointerout", () => {
+      buttonText.setStyle({ backgroundColor: "#4444ff" });
+    });
+
+    // Handle button click
+    buttonText.on("pointerdown", () => {
+      this.scene.start("MainMenu");
+    });
   }
 }
