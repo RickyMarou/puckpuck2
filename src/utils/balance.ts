@@ -13,11 +13,11 @@
  */
 export const CAMERA_ZOOM = {
   /** Minimum zoom level (maximum zoom out) - also used as default starting zoom */
-  MIN: 0.8,
+  MIN: 0.3,
   /** Maximum zoom level (maximum zoom in) - achieved when character is stationary */
-  MAX: 4.0,
+  MAX: 0.8,
   /** Default starting zoom level */
-  DEFAULT: 0.8, // Same as MIN for consistent starting experience
+  DEFAULT: 0.3, // Same as MIN for consistent starting experience
 } as const;
 
 // ===== SLINGSHOT CONFIGURATION =====
@@ -28,7 +28,7 @@ export const CAMERA_ZOOM = {
  */
 export const SLINGSHOT = {
   /** Maximum slingshot extension length in pixels - higher = more power potential */
-  MAX_LENGTH: 300,
+  MAX_LENGTH: 500,
   /** Velocity multiplier when releasing slingshot - higher = faster gameplay */
   VELOCITY_MULTIPLIER: 0.1,
 } as const;
@@ -64,9 +64,9 @@ export const MOUSE = {
  */
 export const TIMING = {
   /** Sling zoom transition duration */
-  SLING_ZOOM_DURATION: 200,
+  SLING_ZOOM_DURATION: 400,
   /** Speed-based zoom transition duration */
-  SPEED_ZOOM_DURATION: 300,
+  SPEED_ZOOM_DURATION: 600,
   /** Mouse wheel zoom transition duration */
   MOUSE_ZOOM_DURATION: 200,
   /** Respawn animation total duration */
