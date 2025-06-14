@@ -9,6 +9,7 @@ export class Game extends Scene {
   puck: Physics.Matter.Sprite;
   msg_text: Phaser.GameObjects.Text;
   sling: Phaser.GameObjects.Graphics;
+  fpsText: Phaser.GameObjects.Text;
   isDragging: boolean;
   startX: number;
   startY: number;
@@ -41,6 +42,7 @@ export class Game extends Scene {
       this.setupCamera();
       this.setupSlingshot();
       this.setupInput();
+      this.setupFPS();
     } catch (error) {
       console.error("Failed to setup game:", error);
       this.showErrorMessage(
@@ -208,7 +210,27 @@ export class Game extends Scene {
     );
   }
 
+  private setupFPS() {
+    // Create FPS counter text
+    this.fpsText = this.add.text(10, 10, "FPS: 60", {
+      fontSize: "16px",
+      color: "#00ff00",
+      fontFamily: "Arial, monospace",
+      backgroundColor: "#000000",
+      padding: { x: 8, y: 4 },
+    });
+
+    // Keep FPS counter fixed to camera
+    this.fpsText.setScrollFactor(0);
+    this.fpsText.setDepth(1000); // High depth to stay on top
+  }
+
   update() {
+    // Update FPS counter
+    if (this.fpsText) {
+      const fps = Math.round(this.game.loop.actualFps);
+      this.fpsText.setText(`FPS: ${fps}`);
+    }
     if (this.isDragging) {
       this.sling.clear();
       this.sling.lineBetween(
