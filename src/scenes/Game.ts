@@ -127,16 +127,10 @@ export class Game extends Scene {
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.GameObject,
       ) => {
-        console.log("dragstart", gameObject);
         if (gameObject === this.puck) {
           this.isDragging = true;
           this.startX = (gameObject as any).x;
           this.startY = (gameObject as any).y;
-          console.log(
-            "dragstart",
-            (gameObject as any).x,
-            (gameObject as any).y,
-          );
         }
       },
     );
@@ -169,7 +163,6 @@ export class Game extends Scene {
           const velocityX = this.diffX * 0.1;
           const velocityY = this.diffY * 0.1;
           this.puck.setVelocity(velocityX, velocityY);
-          console.log("dragend");
           this.camera.zoomTo(1, 400, Phaser.Math.Easing.Cubic.Out, true);
         }
       },
