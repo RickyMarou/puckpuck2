@@ -2,6 +2,7 @@ import { Scene, Physics } from "phaser";
 import { ImportedTrack } from "../utils/track-types";
 import { addTrackToScene } from "../utils/track-importer";
 import { calculateWorldBounds } from "../utils/track-transformer";
+import { isOutOfBounds, getDefaultRespawnPosition } from "../utils/game-logic";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -231,10 +232,9 @@ export class Game extends Scene {
       respawnY = this.currentTrack.startPosition.y;
     } else {
       // Otherwise respawn at center of track bounds
-      respawnX =
-        this.currentTrack.bounds.x + this.currentTrack.bounds.width / 2;
-      respawnY =
-        this.currentTrack.bounds.y + this.currentTrack.bounds.height / 2;
+      const defaultPos = getDefaultRespawnPosition(this.currentTrack.bounds);
+      respawnX = defaultPos.x;
+      respawnY = defaultPos.y;
     }
 
     // Set position and zero velocity
@@ -260,17 +260,9 @@ export class Game extends Scene {
 
     // Check if puck is out of bounds
     if (this.currentTrack && this.puck) {
-      const puckX = this.puck.x;
-      const puckY = this.puck.y;
-      const trackBounds = this.currentTrack.bounds;
+      const puckPosition = { x: this.puck.x, y: this.puck.y };
 
-      // Check if puck is outside the green zone (track bounds)
-      if (
-        puckX < trackBounds.x ||
-        puckX > trackBounds.x + trackBounds.width ||
-        puckY < trackBounds.y ||
-        puckY > trackBounds.y + trackBounds.height
-      ) {
+      if (isOutOfBounds(puckPosition, this.currentTrack.bounds)) {
         // Respawn the puck
         this.respawnPuck();
       }
