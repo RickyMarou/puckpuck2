@@ -114,6 +114,9 @@ export function createInvisibleBoundary(
   trackBounds: TrackBounds,
   thickness: number = 50,
 ): Body[] {
+  console.log("Creating invisible boundaries for track bounds:", trackBounds);
+  console.log("Boundary thickness:", thickness);
+
   const boundaries: GameRect[] = [
     {
       x: trackBounds.x - thickness,
@@ -140,6 +143,8 @@ export function createInvisibleBoundary(
       height: trackBounds.height,
     },
   ];
+
+  console.log("Boundary rectangles:", boundaries);
 
   return createBoundaryBodies(boundaries);
 }
