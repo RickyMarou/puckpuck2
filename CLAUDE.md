@@ -19,11 +19,13 @@ This is a Phaser 3 game project called "puckpuck2" - a single-player top-down ra
 # Install dependencies (using pnpm)
 pnpm install
 
-# Start development server (runs on http://localhost:8080)
-pnpm dev
-
 # Build for production (outputs to dist/)
 pnpm build
+
+# Start development server (runs on http://localhost:8080)
+# NOTE: Running the dev server is NOT necessary to test your changes
+# Use 'pnpm build' to check for build errors instead
+pnpm dev
 
 # Static code quality checks
 pnpm run types     # TypeScript type checking
