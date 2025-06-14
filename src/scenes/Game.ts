@@ -218,12 +218,64 @@ export class Game extends Scene {
     this.fpsText.setDepth(1000); // High depth to stay on top
   }
 
+  private respawnPuck() {
+    if (!this.currentTrack || !this.puck) return;
+
+    // Determine respawn position
+    let respawnX: number;
+    let respawnY: number;
+
+    if (this.currentTrack.startPosition) {
+      // Respawn at start position if available
+      respawnX = this.currentTrack.startPosition.x;
+      respawnY = this.currentTrack.startPosition.y;
+    } else {
+      // Otherwise respawn at center of track bounds
+      respawnX =
+        this.currentTrack.bounds.x + this.currentTrack.bounds.width / 2;
+      respawnY =
+        this.currentTrack.bounds.y + this.currentTrack.bounds.height / 2;
+    }
+
+    // Set position and zero velocity
+    this.puck.setPosition(respawnX, respawnY);
+    this.puck.setVelocity(0, 0);
+
+    // Clear any angular velocity as well
+    this.puck.setAngularVelocity(0);
+
+    // Clear slingshot graphics if dragging
+    if (this.isDragging) {
+      this.isDragging = false;
+      this.sling.clear();
+    }
+  }
+
   update() {
     // Update FPS counter
     if (this.fpsText) {
       const fps = Math.round(this.game.loop.actualFps);
       this.fpsText.setText(`FPS: ${fps}`);
     }
+
+    // Check if puck is out of bounds
+    if (this.currentTrack && this.puck) {
+      const puckX = this.puck.x;
+      const puckY = this.puck.y;
+      const trackBounds = this.currentTrack.bounds;
+
+      // Check if puck is outside the green zone (track bounds)
+      if (
+        puckX < trackBounds.x ||
+        puckX > trackBounds.x + trackBounds.width ||
+        puckY < trackBounds.y ||
+        puckY > trackBounds.y + trackBounds.height
+      ) {
+        // Respawn the puck
+        this.respawnPuck();
+      }
+    }
+
     if (this.isDragging) {
       this.sling.clear();
       this.sling.lineBetween(
