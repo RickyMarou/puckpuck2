@@ -1,6 +1,7 @@
 import { Scene, Physics } from "phaser";
 import { ImportedTrack } from "../utils/track-types";
 import { addTrackToScene } from "../utils/track-importer";
+import { calculateWorldBounds } from "../utils/track-transformer";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -43,10 +44,29 @@ export class Game extends Scene {
     this.currentTrack = track;
 
     try {
-      // Disable world bounds for imported tracks since we create our own boundaries
+      // Calculate world bounds to be slightly larger than track size
+      const worldBounds = calculateWorldBounds(track.bounds, 100);
+
+      // Set Phaser world bounds
+      this.physics.world.setBounds(
+        worldBounds.x,
+        worldBounds.y,
+        worldBounds.width,
+        worldBounds.height,
+      );
+
+      // Disable Matter.js world bounds since we use custom boundaries
       this.matter.world.setBounds();
 
       addTrackToScene(track, this);
+
+      // Set camera bounds to match world bounds
+      this.cameras.main.setBounds(
+        worldBounds.x,
+        worldBounds.y,
+        worldBounds.width,
+        worldBounds.height,
+      );
 
       // Position puck at start line if available
       if (track.startPosition) {

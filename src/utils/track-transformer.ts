@@ -232,3 +232,15 @@ export function createBoundaryWalls(
     },
   ];
 }
+
+export function calculateWorldBounds(
+  trackBounds: TrackBounds,
+  padding: number = 100,
+): GameRect {
+  return {
+    x: trackBounds.x - padding,
+    y: trackBounds.y - padding,
+    width: trackBounds.width + 2 * padding,
+    height: trackBounds.height + 2 * padding,
+  };
+}

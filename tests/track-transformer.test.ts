@@ -10,6 +10,7 @@ import {
   processStartFinishLines,
   calculateStartPosition,
   calculateFinishPosition,
+  calculateWorldBounds,
 } from "../src/utils/track-transformer";
 import { createMockSVG, createMockDocument } from "./test-utils";
 
@@ -353,6 +354,67 @@ describe("track-transformer", () => {
     it("should return null for missing finish line", () => {
       const position = calculateFinishPosition(null);
       expect(position).toBeNull();
+    });
+  });
+
+  describe("calculateWorldBounds", () => {
+    it("should calculate world bounds with default padding", () => {
+      const trackBounds = { x: 100, y: 200, width: 800, height: 400 };
+
+      const worldBounds = calculateWorldBounds(trackBounds);
+
+      expect(worldBounds.x).toBe(0); // 100 - 100
+      expect(worldBounds.y).toBe(100); // 200 - 100
+      expect(worldBounds.width).toBe(1000); // 800 + 2*100
+      expect(worldBounds.height).toBe(600); // 400 + 2*100
+    });
+
+    it("should calculate world bounds with custom padding", () => {
+      const trackBounds = { x: 50, y: 75, width: 600, height: 300 };
+      const padding = 50;
+
+      const worldBounds = calculateWorldBounds(trackBounds, padding);
+
+      expect(worldBounds.x).toBe(0); // 50 - 50
+      expect(worldBounds.y).toBe(25); // 75 - 50
+      expect(worldBounds.width).toBe(700); // 600 + 2*50
+      expect(worldBounds.height).toBe(400); // 300 + 2*50
+    });
+
+    it("should handle track at origin", () => {
+      const trackBounds = { x: 0, y: 0, width: 400, height: 300 };
+      const padding = 25;
+
+      const worldBounds = calculateWorldBounds(trackBounds, padding);
+
+      expect(worldBounds.x).toBe(-25); // 0 - 25
+      expect(worldBounds.y).toBe(-25); // 0 - 25
+      expect(worldBounds.width).toBe(450); // 400 + 2*25
+      expect(worldBounds.height).toBe(350); // 300 + 2*25
+    });
+
+    it("should handle zero padding", () => {
+      const trackBounds = { x: 100, y: 200, width: 500, height: 250 };
+      const padding = 0;
+
+      const worldBounds = calculateWorldBounds(trackBounds, padding);
+
+      expect(worldBounds.x).toBe(100); // Same as track
+      expect(worldBounds.y).toBe(200); // Same as track
+      expect(worldBounds.width).toBe(500); // Same as track
+      expect(worldBounds.height).toBe(250); // Same as track
+    });
+
+    it("should handle large padding", () => {
+      const trackBounds = { x: 200, y: 150, width: 300, height: 200 };
+      const padding = 500;
+
+      const worldBounds = calculateWorldBounds(trackBounds, padding);
+
+      expect(worldBounds.x).toBe(-300); // 200 - 500
+      expect(worldBounds.y).toBe(-350); // 150 - 500
+      expect(worldBounds.width).toBe(1300); // 300 + 2*500
+      expect(worldBounds.height).toBe(1200); // 200 + 2*500
     });
   });
 });

@@ -22,7 +22,7 @@ const config: Types.Core.GameConfig = {
     matter: {
       gravity: { x: 0, y: 0 },
       setBounds: false,
-      debug: true,
+      debug: false,
     },
   },
   scene: [Preloader, MainMenu, MainGame, GameOver],
