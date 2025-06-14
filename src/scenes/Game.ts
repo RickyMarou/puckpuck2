@@ -8,6 +8,13 @@ import {
   isControlAllowed,
   isDragAllowed,
 } from "../utils/game-logic";
+import {
+  calculateSlingZoom,
+  calculateSpeedZoom,
+  calculateSlingLength,
+  calculateVelocityMagnitude,
+  shouldUpdateZoomDuringDrag,
+} from "../utils/camera-logic";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -24,6 +31,8 @@ export class Game extends Scene {
   currentTrack: ImportedTrack | null = null;
   lastValidPosition: { x: number; y: number } | null = null;
   isRespawning: boolean = false;
+  currentZoom: number = 1.0;
+  maxReachedZoomDuringDrag: number = 1.0;
 
   constructor() {
     super("Game");
@@ -153,6 +162,8 @@ export class Game extends Scene {
           this.isDragging = true;
           this.startX = (gameObject as Phaser.Physics.Matter.Sprite).x;
           this.startY = (gameObject as Phaser.Physics.Matter.Sprite).y;
+          // Reset max zoom tracking for new drag
+          this.maxReachedZoomDuringDrag = this.currentZoom;
         }
       },
     );
@@ -173,7 +184,9 @@ export class Game extends Scene {
         ) {
           this.diffX = this.startX - dragX;
           this.diffY = this.startY - dragY;
-          this.camera.zoomTo(0.6, 800, Phaser.Math.Easing.Cubic.InOut, true);
+
+          // Calculate sling-based zoom
+          this.updateCameraZoomForSling();
         }
       },
     );
@@ -194,7 +207,9 @@ export class Game extends Scene {
           const velocityX = this.diffX * 0.1;
           const velocityY = this.diffY * 0.1;
           this.puck.setVelocity(velocityX, velocityY);
-          this.camera.zoomTo(1, 400, Phaser.Math.Easing.Cubic.Out, true);
+
+          // Start speed-based zoom after release
+          this.startSpeedBasedZoom();
         }
       },
     );
@@ -247,6 +262,70 @@ export class Game extends Scene {
     // Keep FPS counter fixed to camera
     this.fpsText.setScrollFactor(0);
     this.fpsText.setDepth(1000); // High depth to stay on top
+  }
+
+  private updateCameraZoomForSling() {
+    const slingLength = calculateSlingLength(
+      this.startX,
+      this.startY,
+      this.puck.x,
+      this.puck.y,
+    );
+
+    const zoomConfig = {
+      minZoom: 0.4,
+      maxZoom: 2.0,
+      defaultZoom: 1.0,
+    };
+
+    const slingData = {
+      length: slingLength,
+      maxLength: 300, // Maximum expected sling length
+    };
+
+    const targetZoom = calculateSlingZoom(slingData, zoomConfig);
+
+    // Only zoom out during drag, never zoom in
+    if (shouldUpdateZoomDuringDrag(this.currentZoom, targetZoom)) {
+      this.currentZoom = targetZoom;
+      this.maxReachedZoomDuringDrag = Math.min(
+        this.maxReachedZoomDuringDrag,
+        targetZoom,
+      );
+      this.camera.zoomTo(targetZoom, 200, Phaser.Math.Easing.Cubic.InOut, true);
+    }
+  }
+
+  private startSpeedBasedZoom() {
+    // Start monitoring speed for zoom adjustments
+    this.updateSpeedBasedZoom();
+  }
+
+  private updateSpeedBasedZoom() {
+    if (this.isDragging || this.isRespawning || !this.puck || !this.puck.body)
+      return;
+
+    const velocityMagnitude = calculateVelocityMagnitude(
+      this.puck.body.velocity.x,
+      this.puck.body.velocity.y,
+    );
+
+    const zoomConfig = {
+      minZoom: 0.4,
+      maxZoom: 2.0,
+      defaultZoom: 1.0,
+    };
+
+    const speedData = {
+      velocity: velocityMagnitude,
+      maxVelocity: 50, // Maximum expected velocity
+    };
+
+    const targetZoom = calculateSpeedZoom(speedData, zoomConfig);
+
+    // Update current zoom and apply
+    this.currentZoom = targetZoom;
+    this.camera.zoomTo(targetZoom, 300, Phaser.Math.Easing.Cubic.Out, true);
   }
 
   private startRespawnAnimation() {
@@ -321,6 +400,11 @@ export class Game extends Scene {
         // Update last valid position when puck is in bounds
         this.lastValidPosition = { x: puckPosition.x, y: puckPosition.y };
       }
+    }
+
+    // Update speed-based zoom when not dragging
+    if (!this.isDragging && !this.isRespawning) {
+      this.updateSpeedBasedZoom();
     }
 
     if (

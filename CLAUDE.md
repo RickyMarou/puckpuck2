@@ -50,6 +50,8 @@ This project maintains high code quality through automated static analysis:
 
 **⚠️ IMPORTANT**: After completing any coding task, always create a git commit with an explicit commit message and detailed description of the changes made.
 
+**⚠️ IMPORTANT**: Always extract logic into small, pure functions and create comprehensive unit tests for them. This follows functional programming patterns and ensures code reliability.
+
 ## Architecture
 
 ### Core Structure
@@ -139,6 +141,49 @@ The game features a sophisticated out-of-bounds detection and respawn system tha
 - **Animation**: Phaser tweens with `Power2.easeInOut` easing for smooth transitions
 - **Input Handling**: All drag events check `!this.isRespawning` to prevent control during animation
 - **Physics**: Velocity and angular velocity reset to zero on respawn
+
+## Dynamic Camera System
+
+The game features an advanced camera system that provides intuitive zoom behavior based on player actions and character movement:
+
+### Sling-Based Zoom Out
+
+- **Linear Scaling**: Zoom level scales linearly with sling extension length
+- **Maximum Zoom Out**: Capped at minimum zoom level (0.4x) when sling reaches maximum length (300px)
+- **No Zoom In During Drag**: Camera only zooms out while dragging, never zooms back in
+- **Zoom Persistence**: Camera maintains maximum reached zoom during entire drag operation
+
+### Speed-Based Zoom In
+
+- **Post-Release Behavior**: After sling release, zoom is controlled by character speed
+- **Maximum Zoom**: When character is stationary (velocity = 0), camera zooms to maximum (2.0x)
+- **Linear Speed Scaling**: Zoom level inversely proportional to velocity magnitude
+- **Real-Time Updates**: Camera continuously adjusts zoom based on current speed
+
+### Camera Logic Functions
+
+All camera behavior is implemented through pure, testable functions in `src/utils/camera-logic.ts`:
+
+- **`calculateSlingZoom()`**: Computes zoom level based on sling extension
+- **`calculateSpeedZoom()`**: Computes zoom level based on character velocity
+- **`calculateSlingLength()`**: Calculates distance between two points
+- **`calculateVelocityMagnitude()`**: Computes velocity magnitude from components
+- **`shouldUpdateZoomDuringDrag()`**: Determines if zoom should update during drag
+
+### Zoom Configuration
+
+- **Minimum Zoom**: 0.4x (maximum zoom out)
+- **Maximum Zoom**: 2.0x (maximum zoom in)
+- **Default Zoom**: 1.0x (normal view)
+- **Maximum Sling Length**: 300px
+- **Maximum Expected Velocity**: 50 units/second
+
+### Technical Implementation
+
+- **State Tracking**: `currentZoom` and `maxReachedZoomDuringDrag` properties
+- **Smooth Transitions**: Phaser camera tweens with easing for all zoom changes
+- **Performance**: Zoom calculations performed only when needed (drag events, speed changes)
+- **Error Handling**: Null checks for physics body and proper fallbacks
 
 ## SVG Track Format Conventions
 
