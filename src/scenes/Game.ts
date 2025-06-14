@@ -2,7 +2,7 @@ import { Scene, Physics } from "phaser";
 import { ImportedTrack } from "../utils/track-types";
 import { addTrackToScene } from "../utils/track-importer";
 import { calculateWorldBounds } from "../utils/track-transformer";
-import { isOutOfBounds, getDefaultRespawnPosition } from "../utils/game-logic";
+import { isOutOfBounds, getRespawnPosition } from "../utils/game-logic";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -17,6 +17,7 @@ export class Game extends Scene {
   diffX: number;
   diffY: number;
   currentTrack: ImportedTrack | null = null;
+  lastValidPosition: { x: number; y: number } | null = null;
 
   constructor() {
     super("Game");
@@ -83,11 +84,16 @@ export class Game extends Scene {
           "pinkstar",
           0,
         );
+        this.lastValidPosition = {
+          x: track.startPosition.x,
+          y: track.startPosition.y,
+        };
       } else {
         // Default to track center
         const centerX = track.bounds.x + track.bounds.width / 2;
         const centerY = track.bounds.y + track.bounds.height / 2;
         this.puck = this.matter.add.sprite(centerX, centerY, "pinkstar", 0);
+        this.lastValidPosition = { x: centerX, y: centerY };
       }
 
       console.log("Imported track loaded successfully");
@@ -101,6 +107,10 @@ export class Game extends Scene {
   private setupPuck() {
     if (!this.puck) {
       this.puck = this.matter.add.sprite(512, 384, "pinkstar", 0);
+      // Initialize lastValidPosition if not already set
+      if (!this.lastValidPosition) {
+        this.lastValidPosition = { x: 512, y: 384 };
+      }
     }
 
     this.puck.setCircle(16);
@@ -222,23 +232,15 @@ export class Game extends Scene {
   private respawnPuck() {
     if (!this.currentTrack || !this.puck) return;
 
-    // Determine respawn position
-    let respawnX: number;
-    let respawnY: number;
-
-    if (this.currentTrack.startPosition) {
-      // Respawn at start position if available
-      respawnX = this.currentTrack.startPosition.x;
-      respawnY = this.currentTrack.startPosition.y;
-    } else {
-      // Otherwise respawn at center of track bounds
-      const defaultPos = getDefaultRespawnPosition(this.currentTrack.bounds);
-      respawnX = defaultPos.x;
-      respawnY = defaultPos.y;
-    }
+    // Determine respawn position using priority order
+    const respawnPos = getRespawnPosition(
+      this.lastValidPosition,
+      this.currentTrack.startPosition,
+      this.currentTrack.bounds,
+    );
 
     // Set position and zero velocity
-    this.puck.setPosition(respawnX, respawnY);
+    this.puck.setPosition(respawnPos.x, respawnPos.y);
     this.puck.setVelocity(0, 0);
 
     // Clear any angular velocity as well
@@ -258,13 +260,16 @@ export class Game extends Scene {
       this.fpsText.setText(`FPS: ${fps}`);
     }
 
-    // Check if puck is out of bounds
+    // Check if puck is out of bounds and update last valid position
     if (this.currentTrack && this.puck) {
       const puckPosition = { x: this.puck.x, y: this.puck.y };
 
       if (isOutOfBounds(puckPosition, this.currentTrack.bounds)) {
         // Respawn the puck
         this.respawnPuck();
+      } else {
+        // Update last valid position when puck is in bounds
+        this.lastValidPosition = { x: puckPosition.x, y: puckPosition.y };
       }
     }
 

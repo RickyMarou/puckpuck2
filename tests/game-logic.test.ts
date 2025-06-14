@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   isOutOfBounds,
   getDefaultRespawnPosition,
+  getRespawnPosition,
 } from "../src/utils/game-logic";
 import { TrackBounds } from "../src/utils/track-types";
 
@@ -106,5 +107,80 @@ describe("getDefaultRespawnPosition", () => {
 
     expect(respawnPos.x).toBe(0); // -200 + 400/2
     expect(respawnPos.y).toBe(0); // -100 + 200/2
+  });
+});
+
+describe("getRespawnPosition", () => {
+  const trackBounds: TrackBounds = {
+    x: 100,
+    y: 200,
+    width: 800,
+    height: 600,
+  };
+
+  it("should return lastValidPosition when available", () => {
+    const lastValidPosition = { x: 300, y: 400 };
+    const startPosition = { x: 150, y: 250 };
+
+    const result = getRespawnPosition(
+      lastValidPosition,
+      startPosition,
+      trackBounds,
+    );
+
+    expect(result).toEqual(lastValidPosition);
+  });
+
+  it("should return startPosition when lastValidPosition is null", () => {
+    const lastValidPosition = null;
+    const startPosition = { x: 150, y: 250 };
+
+    const result = getRespawnPosition(
+      lastValidPosition,
+      startPosition,
+      trackBounds,
+    );
+
+    expect(result).toEqual(startPosition);
+  });
+
+  it("should return center of track when both lastValidPosition and startPosition are null", () => {
+    const lastValidPosition = null;
+    const startPosition = null;
+
+    const result = getRespawnPosition(
+      lastValidPosition,
+      startPosition,
+      trackBounds,
+    );
+
+    expect(result).toEqual({ x: 500, y: 500 }); // Center of track
+  });
+
+  it("should prioritize lastValidPosition over startPosition", () => {
+    const lastValidPosition = { x: 300, y: 400 };
+    const startPosition = { x: 150, y: 250 };
+
+    const result = getRespawnPosition(
+      lastValidPosition,
+      startPosition,
+      trackBounds,
+    );
+
+    expect(result).toEqual(lastValidPosition);
+    expect(result).not.toEqual(startPosition);
+  });
+
+  it("should handle edge case with zero coordinates", () => {
+    const lastValidPosition = { x: 0, y: 0 };
+    const startPosition = { x: 150, y: 250 };
+
+    const result = getRespawnPosition(
+      lastValidPosition,
+      startPosition,
+      trackBounds,
+    );
+
+    expect(result).toEqual({ x: 0, y: 0 });
   });
 });
