@@ -31,8 +31,8 @@ export class Game extends Scene {
   currentTrack: ImportedTrack | null = null;
   lastValidPosition: { x: number; y: number } | null = null;
   isRespawning: boolean = false;
-  currentZoom: number = 1.0;
-  maxReachedZoomDuringDrag: number = 1.0;
+  currentZoom: number = 1.5;
+  maxReachedZoomDuringDrag: number = 1.5;
 
   constructor() {
     super("Game");
@@ -225,9 +225,9 @@ export class Game extends Scene {
         _deltaZ: number,
       ) => {
         const currentZoom = this.camera.zoom;
-        const zoomSpeed = 0.1;
-        const minZoom = 0.3;
-        const maxZoom = 3.0;
+        const zoomSpeed = 0.2;
+        const minZoom = 0.8;
+        const maxZoom = 4.0;
 
         let newZoom: number;
         if (deltaY > 0) {
@@ -273,9 +273,9 @@ export class Game extends Scene {
     );
 
     const zoomConfig = {
-      minZoom: 0.4,
-      maxZoom: 2.0,
-      defaultZoom: 1.0,
+      minZoom: 0.8,
+      maxZoom: 4.0,
+      defaultZoom: 1.5,
     };
 
     const slingData = {
@@ -311,9 +311,9 @@ export class Game extends Scene {
     );
 
     const zoomConfig = {
-      minZoom: 0.4,
-      maxZoom: 2.0,
-      defaultZoom: 1.0,
+      minZoom: 0.8,
+      maxZoom: 4.0,
+      defaultZoom: 1.5,
     };
 
     const speedData = {

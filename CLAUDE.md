@@ -149,14 +149,14 @@ The game features an advanced camera system that provides intuitive zoom behavio
 ### Sling-Based Zoom Out
 
 - **Linear Scaling**: Zoom level scales linearly with sling extension length
-- **Maximum Zoom Out**: Capped at minimum zoom level (0.4x) when sling reaches maximum length (300px)
+- **Maximum Zoom Out**: Capped at minimum zoom level (0.8x) when sling reaches maximum length (300px)
 - **No Zoom In During Drag**: Camera only zooms out while dragging, never zooms back in
 - **Zoom Persistence**: Camera maintains maximum reached zoom during entire drag operation
 
 ### Speed-Based Zoom In
 
 - **Post-Release Behavior**: After sling release, zoom is controlled by character speed
-- **Maximum Zoom**: When character is stationary (velocity = 0), camera zooms to maximum (2.0x)
+- **Maximum Zoom**: When character is stationary (velocity = 0), camera zooms to maximum (4.0x)
 - **Linear Speed Scaling**: Zoom level inversely proportional to velocity magnitude
 - **Real-Time Updates**: Camera continuously adjusts zoom based on current speed
 
@@ -172,9 +172,9 @@ All camera behavior is implemented through pure, testable functions in `src/util
 
 ### Zoom Configuration
 
-- **Minimum Zoom**: 0.4x (maximum zoom out)
-- **Maximum Zoom**: 2.0x (maximum zoom in)
-- **Default Zoom**: 1.0x (normal view)
+- **Minimum Zoom**: 0.8x (maximum zoom out)
+- **Maximum Zoom**: 4.0x (maximum zoom in)
+- **Default Zoom**: 1.5x (normal view)
 - **Maximum Sling Length**: 300px
 - **Maximum Expected Velocity**: 50 units/second
 
