@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2000" height="600" xmlns="http://www.w3.org/2000/svg" data-size="4000">
+  <!-- Background (out of bounds - default white) -->
+  <rect width="2000" height="600" fill="#FFFFFF"/>
+  
+  <!-- Track area (green - in bounds) -->
+  <rect id="track-area" x="100" y="150" width="1800" height="300" fill="#00FF00"/>
+  
+  <!-- Walls with holes (black) -->
+  <!-- Top wall with gaps -->
+  <rect id="wall-top-1" x="100" y="130" width="400" height="20" fill="#000000"/>
+  <rect id="wall-top-2" x="600" y="130" width="300" height="20" fill="#000000"/>
+  <rect id="wall-top-3" x="1000" y="130" width="400" height="20" fill="#000000"/>
+  <rect id="wall-top-4" x="1500" y="130" width="400" height="20" fill="#000000"/>
+  
+  <!-- Bottom wall with gaps -->
+  <rect id="wall-bottom-1" x="100" y="450" width="300" height="20" fill="#000000"/>
+  <rect id="wall-bottom-2" x="500" y="450" width="400" height="20" fill="#000000"/>
+  <rect id="wall-bottom-3" x="1000" y="450" width="300" height="20" fill="#000000"/>
+  <rect id="wall-bottom-4" x="1400" y="450" width="500" height="20" fill="#000000"/>
+  
+  <!-- Start wall (closes the track at start) -->
+  <rect id="wall-start" x="80" y="130" width="20" height="340" fill="#000000"/>
+  
+  <!-- End wall (closes the track at end) -->
+  <rect id="wall-end" x="1900" y="130" width="20" height="340" fill="#000000"/>
+  
+  <!-- Obstacles (purple circles and rectangles) -->
+  <circle id="obstacle-1" cx="400" cy="300" r="30" fill="#800080"/>
+  <circle id="obstacle-2" cx="700" cy="250" r="25" fill="#800080"/>
+  <rect id="obstacle-3" x="950" y="280" width="60" height="40" fill="#800080"/>
+  <circle id="obstacle-4" cx="1200" cy="350" r="35" fill="#800080"/>
+  <rect id="obstacle-5" x="1450" y="200" width="50" height="50" fill="#800080"/>
+  <circle id="obstacle-6" cx="1650" cy="300" r="30" fill="#800080"/>
+  
+  <!-- Start line (blue) -->
+  <rect id="start-line" x="150" y="150" width="10" height="300" fill="#0000FF"/>
+  
+  <!-- Finish line (gold) -->
+  <rect id="finish-line" x="1840" y="150" width="10" height="300" fill="#FFD700"/>
+</svg>
