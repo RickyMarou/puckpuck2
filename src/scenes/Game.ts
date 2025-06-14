@@ -28,11 +28,13 @@ export class Game extends Scene {
       | ImportedTrack
       | undefined;
 
-    if (importedTrack) {
-      this.setupImportedTrack(importedTrack);
-    } else {
-      this.setupDefaultTrack();
+    if (!importedTrack) {
+      throw new Error(
+        "No SVG track provided. Please import an SVG track file.",
+      );
     }
+
+    this.setupImportedTrack(importedTrack);
 
     this.setupPuck();
     this.setupCamera();
@@ -46,14 +48,6 @@ export class Game extends Scene {
     try {
       // Calculate world bounds to be slightly larger than track size
       const worldBounds = calculateWorldBounds(track.bounds, 100);
-
-      // Set Phaser world bounds
-      this.physics.world.setBounds(
-        worldBounds.x,
-        worldBounds.y,
-        worldBounds.width,
-        worldBounds.height,
-      );
 
       // Disable Matter.js world bounds since we use custom boundaries
       this.matter.world.setBounds();
@@ -86,26 +80,8 @@ export class Game extends Scene {
       console.log("Imported track loaded successfully");
     } catch (error) {
       console.error("Failed to load imported track:", error);
-      this.setupDefaultTrack();
+      throw new Error(`Failed to load SVG track: ${error}`);
     }
-  }
-
-  private setupDefaultTrack() {
-    // Original default track setup
-    this.puck = this.matter.add.sprite(512, 384, "pinkstar", 0);
-
-    this.matter.add
-      .image(300, 568, "pinkwall")
-      .setScale(500, 32)
-      .setStatic(true)
-      .setBounce(2)
-      .setAngle(20);
-
-    this.matter.add
-      .image(800, 690, "pinkwall")
-      .setScale(500, 32)
-      .setBounce(0.1)
-      .setStatic(true);
   }
 
   private setupPuck() {
