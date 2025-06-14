@@ -39,3 +39,31 @@ export function getRespawnPosition(
   // Center fallback only if no start position is available
   return getDefaultRespawnPosition(trackBounds);
 }
+
+export interface ControlState {
+  isRespawning: boolean;
+  isDragging?: boolean;
+}
+
+export function isControlAllowed(
+  gameObject: Phaser.GameObjects.GameObject,
+  puck: Phaser.GameObjects.GameObject,
+  controlState: ControlState,
+): boolean {
+  // Control is allowed only if:
+  // 1. The target object is the puck
+  // 2. We are not currently in a respawn animation
+  return gameObject === puck && !controlState.isRespawning;
+}
+
+export function isDragAllowed(
+  gameObject: Phaser.GameObjects.GameObject,
+  puck: Phaser.GameObjects.GameObject,
+  controlState: ControlState,
+): boolean {
+  // Drag is allowed if control is allowed AND we are already dragging
+  return (
+    isControlAllowed(gameObject, puck, controlState) &&
+    !!controlState.isDragging
+  );
+}

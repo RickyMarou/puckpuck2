@@ -3,6 +3,8 @@ import {
   isOutOfBounds,
   getDefaultRespawnPosition,
   getRespawnPosition,
+  isControlAllowed,
+  isDragAllowed,
 } from "../src/utils/game-logic";
 import { TrackBounds } from "../src/utils/track-types";
 
@@ -182,5 +184,103 @@ describe("getRespawnPosition", () => {
     );
 
     expect(result).toEqual({ x: 0, y: 0 });
+  });
+});
+
+describe("isControlAllowed", () => {
+  const mockPuck = { id: "puck" } as Phaser.GameObjects.GameObject;
+  const mockOtherObject = { id: "other" } as Phaser.GameObjects.GameObject;
+
+  it("should allow control when target is puck and not respawning", () => {
+    const controlState = { isRespawning: false };
+
+    const result = isControlAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(true);
+  });
+
+  it("should deny control when not respawning but target is not puck", () => {
+    const controlState = { isRespawning: false };
+
+    const result = isControlAllowed(mockOtherObject, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny control when target is puck but respawning", () => {
+    const controlState = { isRespawning: true };
+
+    const result = isControlAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny control when both conditions are wrong", () => {
+    const controlState = { isRespawning: true };
+
+    const result = isControlAllowed(mockOtherObject, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should handle isDragging state without affecting result", () => {
+    const controlState = { isRespawning: false, isDragging: true };
+
+    const result = isControlAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(true);
+  });
+});
+
+describe("isDragAllowed", () => {
+  const mockPuck = { id: "puck" } as Phaser.GameObjects.GameObject;
+  const mockOtherObject = { id: "other" } as Phaser.GameObjects.GameObject;
+
+  it("should allow drag when control allowed and is dragging", () => {
+    const controlState = { isRespawning: false, isDragging: true };
+
+    const result = isDragAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(true);
+  });
+
+  it("should deny drag when control allowed but not dragging", () => {
+    const controlState = { isRespawning: false, isDragging: false };
+
+    const result = isDragAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny drag when control allowed but isDragging is undefined", () => {
+    const controlState = { isRespawning: false };
+
+    const result = isDragAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny drag when target is not puck", () => {
+    const controlState = { isRespawning: false, isDragging: true };
+
+    const result = isDragAllowed(mockOtherObject, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny drag when respawning", () => {
+    const controlState = { isRespawning: true, isDragging: true };
+
+    const result = isDragAllowed(mockPuck, mockPuck, controlState);
+
+    expect(result).toBe(false);
+  });
+
+  it("should deny drag when all conditions are wrong", () => {
+    const controlState = { isRespawning: true, isDragging: false };
+
+    const result = isDragAllowed(mockOtherObject, mockPuck, controlState);
+
+    expect(result).toBe(false);
   });
 });

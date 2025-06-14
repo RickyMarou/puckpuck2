@@ -2,7 +2,12 @@ import { Scene, Physics } from "phaser";
 import { ImportedTrack } from "../utils/track-types";
 import { addTrackToScene } from "../utils/track-importer";
 import { calculateWorldBounds } from "../utils/track-transformer";
-import { isOutOfBounds, getRespawnPosition } from "../utils/game-logic";
+import {
+  isOutOfBounds,
+  getRespawnPosition,
+  isControlAllowed,
+  isDragAllowed,
+} from "../utils/game-logic";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -140,10 +145,14 @@ export class Game extends Scene {
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.GameObject,
       ) => {
-        if (gameObject === this.puck && !this.isRespawning) {
+        if (
+          isControlAllowed(gameObject, this.puck, {
+            isRespawning: this.isRespawning,
+          })
+        ) {
           this.isDragging = true;
-          this.startX = (gameObject as any).x;
-          this.startY = (gameObject as any).y;
+          this.startX = (gameObject as Phaser.Physics.Matter.Sprite).x;
+          this.startY = (gameObject as Phaser.Physics.Matter.Sprite).y;
         }
       },
     );
@@ -156,7 +165,12 @@ export class Game extends Scene {
         dragX: number,
         dragY: number,
       ) => {
-        if (gameObject === this.puck && this.isDragging && !this.isRespawning) {
+        if (
+          isDragAllowed(gameObject, this.puck, {
+            isRespawning: this.isRespawning,
+            isDragging: this.isDragging,
+          })
+        ) {
           this.diffX = this.startX - dragX;
           this.diffY = this.startY - dragY;
           this.camera.zoomTo(0.6, 800, Phaser.Math.Easing.Cubic.InOut, true);
@@ -170,7 +184,11 @@ export class Game extends Scene {
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.GameObject,
       ) => {
-        if (gameObject === this.puck && !this.isRespawning) {
+        if (
+          isControlAllowed(gameObject, this.puck, {
+            isRespawning: this.isRespawning,
+          })
+        ) {
           this.sling.clear();
           this.isDragging = false;
           const velocityX = this.diffX * 0.1;
@@ -305,7 +323,12 @@ export class Game extends Scene {
       }
     }
 
-    if (this.isDragging && !this.isRespawning) {
+    if (
+      isDragAllowed(this.puck, this.puck, {
+        isRespawning: this.isRespawning,
+        isDragging: this.isDragging,
+      })
+    ) {
       this.sling.clear();
       this.sling.lineBetween(
         Math.round(this.puck.x),
