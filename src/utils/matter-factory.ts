@@ -111,37 +111,12 @@ export function createBoundaryBodies(boundaries: GameRect[]): Body[] {
 }
 
 export function createInvisibleBoundary(
-  trackBounds: TrackBounds,
-  thickness: number = 50,
+  _trackBounds: TrackBounds,
+  _thickness: number = 50,
 ): Body[] {
-  const boundaries: GameRect[] = [
-    {
-      x: trackBounds.x - thickness,
-      y: trackBounds.y - thickness,
-      width: trackBounds.width + 2 * thickness,
-      height: thickness,
-    },
-    {
-      x: trackBounds.x - thickness,
-      y: trackBounds.y + trackBounds.height,
-      width: trackBounds.width + 2 * thickness,
-      height: thickness,
-    },
-    {
-      x: trackBounds.x - thickness,
-      y: trackBounds.y,
-      width: thickness,
-      height: trackBounds.height,
-    },
-    {
-      x: trackBounds.x + trackBounds.width,
-      y: trackBounds.y,
-      width: thickness,
-      height: trackBounds.height,
-    },
-  ];
-
-  return createBoundaryBodies(boundaries);
+  // Don't create any boundaries - let walls define the track edges
+  // This allows gaps in walls to function as intended passages
+  return [];
 }
 
 export function addBodiesWithPhysics(

@@ -195,7 +195,7 @@ describe("matter-factory", () => {
   });
 
   describe("createInvisibleBoundary", () => {
-    it("should create invisible boundary around track bounds", () => {
+    it("should not create any boundaries to allow wall gaps to function", () => {
       const trackBounds: TrackBounds = {
         x: 100,
         y: 150,
@@ -206,21 +206,11 @@ describe("matter-factory", () => {
 
       const bodies = createInvisibleBoundary(trackBounds, thickness);
 
-      expect(bodies).toHaveLength(4);
-      expect(mockBodies.rectangle).toHaveBeenCalledTimes(4);
-
-      // Top boundary
-      expect(mockBodies.rectangle).toHaveBeenNthCalledWith(
-        1,
-        expect.any(Number), // centerX
-        expect.any(Number), // centerY
-        850, // width: trackWidth + 2*thickness
-        25, // height: thickness
-        expect.objectContaining({ label: "boundary" }),
-      );
+      expect(bodies).toHaveLength(0);
+      expect(mockBodies.rectangle).not.toHaveBeenCalled();
     });
 
-    it("should use default thickness when not provided", () => {
+    it("should return empty array regardless of thickness", () => {
       const trackBounds: TrackBounds = {
         x: 100,
         y: 150,
@@ -230,17 +220,8 @@ describe("matter-factory", () => {
 
       const bodies = createInvisibleBoundary(trackBounds);
 
-      expect(bodies).toHaveLength(4);
-
-      // Should use default thickness of 50
-      expect(mockBodies.rectangle).toHaveBeenNthCalledWith(
-        1,
-        expect.any(Number),
-        expect.any(Number),
-        900, // width: 800 + 2*50
-        50, // height: 50
-        expect.any(Object),
-      );
+      expect(bodies).toHaveLength(0);
+      expect(mockBodies.rectangle).not.toHaveBeenCalled();
     });
   });
 });
