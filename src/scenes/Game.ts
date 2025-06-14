@@ -140,7 +140,7 @@ export class Game extends Scene {
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.GameObject,
       ) => {
-        if (gameObject === this.puck) {
+        if (gameObject === this.puck && !this.isRespawning) {
           this.isDragging = true;
           this.startX = (gameObject as any).x;
           this.startY = (gameObject as any).y;
@@ -156,7 +156,7 @@ export class Game extends Scene {
         dragX: number,
         dragY: number,
       ) => {
-        if (gameObject === this.puck && this.isDragging) {
+        if (gameObject === this.puck && this.isDragging && !this.isRespawning) {
           this.diffX = this.startX - dragX;
           this.diffY = this.startY - dragY;
           this.camera.zoomTo(0.6, 800, Phaser.Math.Easing.Cubic.InOut, true);
@@ -170,7 +170,7 @@ export class Game extends Scene {
         _pointer: Phaser.Input.Pointer,
         gameObject: Phaser.GameObjects.GameObject,
       ) => {
-        if (gameObject === this.puck) {
+        if (gameObject === this.puck && !this.isRespawning) {
           this.sling.clear();
           this.isDragging = false;
           const velocityX = this.diffX * 0.1;
@@ -305,7 +305,7 @@ export class Game extends Scene {
       }
     }
 
-    if (this.isDragging) {
+    if (this.isDragging && !this.isRespawning) {
       this.sling.clear();
       this.sling.lineBetween(
         Math.round(this.puck.x),

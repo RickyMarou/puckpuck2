@@ -67,6 +67,8 @@ This project maintains high code quality through automated static analysis:
 - **Slingshot Mechanics**: Drag to pull back and release to launch
 - **Camera System**: Follows puck with smooth transitions and zoom effects during drag
 - **Walls**: Pink obstacles with different bounce properties (some static, some with high restitution)
+- **Out-of-Bounds System**: Automatic respawn when puck leaves the green track area
+- **Respawn Animation**: Smooth fade out/fade in transitions for better visual feedback
 
 ### Build Configuration
 
@@ -100,6 +102,43 @@ This project maintains high code quality through automated static analysis:
    - Default track uses Phaser's built-in world bounds (`setBounds: true`)
    - Imported tracks disable world bounds and use custom boundary bodies for proper collision detection
 6. **Track System**: SVG track import system with automatic scaling and physics body generation
+
+## Out-of-Bounds and Respawn System
+
+The game features a sophisticated out-of-bounds detection and respawn system that provides smooth gameplay experience:
+
+### Out-of-Bounds Detection
+
+- **Green Zone (In-Bounds)**: Defined by the SVG track area (`#00FF00` color)
+- **Red Zone (Out-of-Bounds)**: Any area outside the green track bounds
+- **Detection**: Performed every frame using `isOutOfBounds()` utility function in `src/utils/game-logic.ts`
+
+### Last Valid Position Tracking
+
+- **Continuous Tracking**: Every frame when puck is in-bounds, position is stored as `lastValidPosition`
+- **Memory**: Maintains the exact exit point where puck left the track
+- **Priority**: Used as primary respawn location to prevent respawning in obstacle-filled areas
+
+### Respawn Animation System
+
+- **Total Duration**: 800ms (400ms fade out + 400ms fade in)
+- **Fade Out**: Puck becomes transparent when out-of-bounds detected
+- **Repositioning**: While invisible, puck is moved to respawn position
+- **Fade In**: Puck becomes visible at new location
+- **Control Lock**: Player input is disabled during entire animation (`isRespawning` flag)
+
+### Respawn Position Priority
+
+1. **Primary**: `lastValidPosition` - Where puck last exited track bounds
+2. **Secondary**: `startPosition` - Blue start line from SVG track
+3. **Fallback**: Center of track bounds (only if no start line exists)
+
+### Technical Implementation
+
+- **Game Logic**: `src/utils/game-logic.ts` - Core detection and position calculation functions
+- **Animation**: Phaser tweens with `Power2.easeInOut` easing for smooth transitions
+- **Input Handling**: All drag events check `!this.isRespawning` to prevent control during animation
+- **Physics**: Velocity and angular velocity reset to zero on respawn
 
 ## SVG Track Format Conventions
 
