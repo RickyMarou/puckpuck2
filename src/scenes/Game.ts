@@ -18,6 +18,7 @@ export class Game extends Scene {
   diffY: number;
   currentTrack: ImportedTrack | null = null;
   lastValidPosition: { x: number; y: number } | null = null;
+  isRespawning: boolean = false;
 
   constructor() {
     super("Game");
@@ -119,6 +120,7 @@ export class Game extends Scene {
     this.puck.setFrictionAir(0.05);
     this.puck.setInteractive();
     this.input.setDraggable(this.puck);
+    this.puck.setAlpha(1); // Ensure puck starts fully visible
   }
 
   private setupCamera() {
@@ -229,7 +231,34 @@ export class Game extends Scene {
     this.fpsText.setDepth(1000); // High depth to stay on top
   }
 
-  private respawnPuck() {
+  private startRespawnAnimation() {
+    if (!this.currentTrack || !this.puck || this.isRespawning) return;
+
+    this.isRespawning = true;
+
+    // Stop the puck immediately
+    this.puck.setVelocity(0, 0);
+    this.puck.setAngularVelocity(0);
+
+    // Clear slingshot graphics if dragging
+    if (this.isDragging) {
+      this.isDragging = false;
+      this.sling.clear();
+    }
+
+    // Fade out animation (400ms)
+    this.tweens.add({
+      targets: this.puck,
+      alpha: 0,
+      duration: 400,
+      ease: "Power2.easeInOut",
+      onComplete: () => {
+        this.repositionAndFadeIn();
+      },
+    });
+  }
+
+  private repositionAndFadeIn() {
     if (!this.currentTrack || !this.puck) return;
 
     // Determine respawn position using priority order
@@ -239,18 +268,21 @@ export class Game extends Scene {
       this.currentTrack.bounds,
     );
 
-    // Set position and zero velocity
+    // Set new position while invisible
     this.puck.setPosition(respawnPos.x, respawnPos.y);
     this.puck.setVelocity(0, 0);
-
-    // Clear any angular velocity as well
     this.puck.setAngularVelocity(0);
 
-    // Clear slingshot graphics if dragging
-    if (this.isDragging) {
-      this.isDragging = false;
-      this.sling.clear();
-    }
+    // Fade in animation (400ms)
+    this.tweens.add({
+      targets: this.puck,
+      alpha: 1,
+      duration: 400,
+      ease: "Power2.easeInOut",
+      onComplete: () => {
+        this.isRespawning = false;
+      },
+    });
   }
 
   update() {
@@ -261,12 +293,12 @@ export class Game extends Scene {
     }
 
     // Check if puck is out of bounds and update last valid position
-    if (this.currentTrack && this.puck) {
+    if (this.currentTrack && this.puck && !this.isRespawning) {
       const puckPosition = { x: this.puck.x, y: this.puck.y };
 
       if (isOutOfBounds(puckPosition, this.currentTrack.bounds)) {
-        // Respawn the puck
-        this.respawnPuck();
+        // Start respawn animation
+        this.startRespawnAnimation();
       } else {
         // Update last valid position when puck is in bounds
         this.lastValidPosition = { x: puckPosition.x, y: puckPosition.y };
