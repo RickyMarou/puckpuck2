@@ -1,6 +1,6 @@
 import { Game as MainGame } from "./scenes/Game";
 import { GameOver } from "./scenes/GameOver";
-// import { MainMenu } from "./scenes/MainMenu";
+import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
 
 import { Game, Types } from "phaser";
@@ -21,16 +21,11 @@ const config: Types.Core.GameConfig = {
     default: "matter",
     matter: {
       gravity: { x: 0, y: 0 },
-      setBounds: true,
+      setBounds: false,
       debug: true,
     },
   },
-  scene: [
-    Preloader,
-    // MainMenu,
-    MainGame,
-    GameOver,
-  ],
+  scene: [Preloader, MainMenu, MainGame, GameOver],
 };
 
 export default new Game(config);
