@@ -49,9 +49,6 @@ export class Game extends Scene {
       // Calculate world bounds to be slightly larger than track size
       const worldBounds = calculateWorldBounds(track.bounds, 100);
 
-      console.log("Track bounds:", track.bounds);
-      console.log("World bounds:", worldBounds);
-
       // Disable Matter.js built-in world bounds since we use custom boundaries
       // Note: Calling without parameters or with specific values, not false
       // this.matter.world.setBounds(); // This might use defaults

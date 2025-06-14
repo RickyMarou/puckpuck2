@@ -18,6 +18,7 @@ import {
   processStartFinishLines,
   calculateStartPosition,
   calculateFinishPosition,
+  calculateWorldBounds,
 } from "./track-transformer";
 import {
   createWallBodies,
@@ -151,14 +152,17 @@ export function addTrackToScene(
 }
 
 function createTrackVisuals(track: ImportedTrack, scene: Phaser.Scene): void {
-  // Create out-of-bounds background (dark red)
+  // Calculate world bounds for background with extra padding
+  const worldBounds = calculateWorldBounds(track.bounds, 500);
+
+  // Create out-of-bounds background (dark red) covering entire world
   const outOfBoundsGraphics = scene.add.graphics();
   outOfBoundsGraphics.fillStyle(0x330000); // Dark red
   outOfBoundsGraphics.fillRect(
-    0,
-    0,
-    scene.cameras.main.width,
-    scene.cameras.main.height,
+    worldBounds.x,
+    worldBounds.y,
+    worldBounds.width,
+    worldBounds.height,
   );
   outOfBoundsGraphics.setDepth(-2);
 
