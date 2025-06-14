@@ -14,7 +14,16 @@ import {
   calculateSlingLength,
   calculateVelocityMagnitude,
   shouldUpdateZoomDuringDrag,
+  getZoomConfig,
 } from "../utils/camera-logic";
+import {
+  CAMERA_ZOOM,
+  SLINGSHOT,
+  PHYSICS,
+  MOUSE,
+  TIMING,
+  DERIVED,
+} from "../utils/balance";
 
 export class Game extends Scene {
   camera: Phaser.Cameras.Scene2D.Camera;
@@ -31,8 +40,8 @@ export class Game extends Scene {
   currentTrack: ImportedTrack | null = null;
   lastValidPosition: { x: number; y: number } | null = null;
   isRespawning: boolean = false;
-  currentZoom: number = 1.5;
-  maxReachedZoomDuringDrag: number = 1.5;
+  currentZoom: number = CAMERA_ZOOM.DEFAULT;
+  maxReachedZoomDuringDrag: number = CAMERA_ZOOM.DEFAULT;
 
   constructor() {
     super("Game");
@@ -129,9 +138,9 @@ export class Game extends Scene {
     }
 
     this.puck.setCircle(16);
-    this.puck.setBounce(0.8);
+    this.puck.setBounce(PHYSICS.BOUNCE);
     this.puck.anims.play("idle");
-    this.puck.setFrictionAir(0.05);
+    this.puck.setFrictionAir(PHYSICS.AIR_FRICTION);
     this.puck.setInteractive();
     this.input.setDraggable(this.puck);
     this.puck.setAlpha(1); // Ensure puck starts fully visible
@@ -204,8 +213,8 @@ export class Game extends Scene {
         ) {
           this.sling.clear();
           this.isDragging = false;
-          const velocityX = this.diffX * 0.1;
-          const velocityY = this.diffY * 0.1;
+          const velocityX = this.diffX * SLINGSHOT.VELOCITY_MULTIPLIER;
+          const velocityY = this.diffY * SLINGSHOT.VELOCITY_MULTIPLIER;
           this.puck.setVelocity(velocityX, velocityY);
 
           // Start speed-based zoom after release
@@ -225,9 +234,9 @@ export class Game extends Scene {
         _deltaZ: number,
       ) => {
         const currentZoom = this.camera.zoom;
-        const zoomSpeed = 0.2;
-        const minZoom = 0.8;
-        const maxZoom = 4.0;
+        const zoomSpeed = MOUSE.ZOOM_SPEED;
+        const minZoom = CAMERA_ZOOM.MIN;
+        const maxZoom = CAMERA_ZOOM.MAX;
 
         let newZoom: number;
         if (deltaY > 0) {
@@ -241,7 +250,7 @@ export class Game extends Scene {
         // Apply zoom with smooth transition
         this.camera.zoomTo(
           newZoom,
-          200,
+          TIMING.MOUSE_ZOOM_DURATION,
           Phaser.Math.Easing.Quadratic.Out,
           true,
         );
@@ -272,15 +281,11 @@ export class Game extends Scene {
       this.puck.y,
     );
 
-    const zoomConfig = {
-      minZoom: 0.8,
-      maxZoom: 4.0,
-      defaultZoom: 1.5,
-    };
+    const zoomConfig = getZoomConfig();
 
     const slingData = {
       length: slingLength,
-      maxLength: 300, // Maximum expected sling length
+      maxLength: SLINGSHOT.MAX_LENGTH,
     };
 
     const targetZoom = calculateSlingZoom(slingData, zoomConfig);
@@ -292,7 +297,12 @@ export class Game extends Scene {
         this.maxReachedZoomDuringDrag,
         targetZoom,
       );
-      this.camera.zoomTo(targetZoom, 200, Phaser.Math.Easing.Cubic.InOut, true);
+      this.camera.zoomTo(
+        targetZoom,
+        TIMING.SLING_ZOOM_DURATION,
+        Phaser.Math.Easing.Cubic.InOut,
+        true,
+      );
     }
   }
 
@@ -310,22 +320,23 @@ export class Game extends Scene {
       this.puck.body.velocity.y,
     );
 
-    const zoomConfig = {
-      minZoom: 0.8,
-      maxZoom: 4.0,
-      defaultZoom: 1.5,
-    };
+    const zoomConfig = getZoomConfig();
 
     const speedData = {
       velocity: velocityMagnitude,
-      maxVelocity: 50, // Maximum expected velocity
+      maxVelocity: PHYSICS.MAX_VELOCITY,
     };
 
     const targetZoom = calculateSpeedZoom(speedData, zoomConfig);
 
     // Update current zoom and apply
     this.currentZoom = targetZoom;
-    this.camera.zoomTo(targetZoom, 300, Phaser.Math.Easing.Cubic.Out, true);
+    this.camera.zoomTo(
+      targetZoom,
+      TIMING.SPEED_ZOOM_DURATION,
+      Phaser.Math.Easing.Cubic.Out,
+      true,
+    );
   }
 
   private startRespawnAnimation() {
@@ -343,11 +354,11 @@ export class Game extends Scene {
       this.sling.clear();
     }
 
-    // Fade out animation (400ms)
+    // Fade out animation
     this.tweens.add({
       targets: this.puck,
       alpha: 0,
-      duration: 400,
+      duration: DERIVED.RESPAWN_FADE_DURATION,
       ease: "Power2.easeInOut",
       onComplete: () => {
         this.repositionAndFadeIn();
@@ -370,11 +381,11 @@ export class Game extends Scene {
     this.puck.setVelocity(0, 0);
     this.puck.setAngularVelocity(0);
 
-    // Fade in animation (400ms)
+    // Fade in animation
     this.tweens.add({
       targets: this.puck,
       alpha: 1,
-      duration: 400,
+      duration: DERIVED.RESPAWN_FADE_DURATION,
       ease: "Power2.easeInOut",
       onComplete: () => {
         this.isRespawning = false;

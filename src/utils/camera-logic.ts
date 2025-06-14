@@ -8,10 +8,23 @@ export interface SpeedData {
   maxVelocity: number;
 }
 
+import { CAMERA_ZOOM } from "./balance";
+
 export interface ZoomConfig {
   minZoom: number;
   maxZoom: number;
   defaultZoom: number;
+}
+
+/**
+ * Get the standard zoom configuration from balance settings
+ */
+export function getZoomConfig(): ZoomConfig {
+  return {
+    minZoom: CAMERA_ZOOM.MIN,
+    maxZoom: CAMERA_ZOOM.MAX,
+    defaultZoom: CAMERA_ZOOM.DEFAULT,
+  };
 }
 
 /**
