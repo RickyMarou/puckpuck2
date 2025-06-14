@@ -33,12 +33,17 @@ We are building a single player racing game with the following features:
 
 # Current state
 
-We have a prototype of a ball character in a box with two walls and a basic slingshot mechanism.
-We find this prototype okay, it at least validates that the current library choices should work for the end goal we have in mind
+We have the SVG track import in a good state. We also have the base gameplay mechanics in place, and that's about that.
 
 # Next step
 
-The first big feature we want to implement is the SVG track import. For this we are going to need a menu and a way to load SVG files.
+We want to create a proper dev mode so I can fine tune the game main balance variables while playing it, instead.
+So we will want a dev mode where:
+
+- It automatically loads the test track
+- It shows the variables in balance.ts and allows me to edit them while playing
+
+Then we also want to try more complex tracks, especially ones with curves.
 
 # Anatomy of a track
 
