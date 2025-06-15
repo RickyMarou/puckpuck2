@@ -155,9 +155,9 @@ function createTrackVisuals(track: ImportedTrack, scene: Phaser.Scene): void {
   // Calculate world bounds for background with extra padding
   const worldBounds = calculateWorldBounds(track.bounds, 500);
 
-  // Create out-of-bounds background (dark red) covering entire world
+  // Create out-of-bounds background (sky blue) covering entire world
   const outOfBoundsGraphics = scene.add.graphics();
-  outOfBoundsGraphics.fillStyle(0x330000); // Dark red
+  outOfBoundsGraphics.fillStyle(0x87ceeb); // Sky blue
   outOfBoundsGraphics.fillRect(
     worldBounds.x,
     worldBounds.y,
@@ -166,9 +166,9 @@ function createTrackVisuals(track: ImportedTrack, scene: Phaser.Scene): void {
   );
   outOfBoundsGraphics.setDepth(-2);
 
-  // Create track area background (green)
+  // Create track area background (white)
   const trackGraphics = scene.add.graphics();
-  trackGraphics.fillStyle(0x004400); // Dark green
+  trackGraphics.fillStyle(0xffffff); // White
   trackGraphics.fillRect(
     track.bounds.x,
     track.bounds.y,

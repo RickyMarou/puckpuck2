@@ -58,7 +58,7 @@ export const MOCK_TRACK_SVG = createMockSVG([
     y: 100,
     width: 800,
     height: 300,
-    fill: "#00FF00",
+    fill: "#FFFFFF",
   },
 
   // Walls

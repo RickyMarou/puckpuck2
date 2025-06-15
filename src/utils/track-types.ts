@@ -88,12 +88,12 @@ export interface ScalingFactor {
 }
 
 export const TRACK_COLORS = {
-  TRACK_AREA: "#00FF00",
+  TRACK_AREA: "#FFFFFF",
   WALL: "#000000",
   START_LINE: "#0000FF",
   FINISH_LINE: "#FFD700",
   OBSTACLE: "#800080",
-  OUT_OF_BOUNDS: "#FF0000",
+  OUT_OF_BOUNDS: "#87CEEB",
 } as const;
 
 export function isGameCircle(shape: GameShape): shape is GameCircle {

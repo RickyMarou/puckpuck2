@@ -48,7 +48,7 @@ describe("track-importer", () => {
     it("should handle SVG without start/finish lines", () => {
       const svgWithoutLines = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1000" height="500" xmlns="http://www.w3.org/2000/svg">
-  <rect x="100" y="100" width="800" height="300" fill="#00FF00"/>
+  <rect x="100" y="100" width="800" height="300" fill="#FFFFFF"/>
 </svg>`;
 
       const result = importTrack(svgWithoutLines, MOCK_GAME_CONFIG);
@@ -187,7 +187,7 @@ describe("track-importer", () => {
     it("should handle SVG with malformed elements", () => {
       const malformedSVG = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="1000" height="500" xmlns="http://www.w3.org/2000/svg">
-  <rect width="800" height="300" fill="#00FF00"/>
+  <rect width="800" height="300" fill="#FFFFFF"/>
   <rect x="abc" y="def" width="100" height="100" fill="#000000"/>
 </svg>`;
 
