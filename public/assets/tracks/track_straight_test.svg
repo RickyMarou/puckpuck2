@@ -26,12 +26,12 @@
   <rect id="wall-end" x="130" y="80" width="340" height="20" fill="#000000"/>
   
   <!-- Obstacles (purple circles and rectangles) -->
-  <circle id="obstacle-1" cx="300" cy="400" r="30" fill="#800080"/>
-  <circle id="obstacle-2" cx="250" cy="700" r="25" fill="#800080"/>
-  <rect id="obstacle-3" x="280" y="950" width="40" height="60" fill="#800080"/>
-  <circle id="obstacle-4" cx="350" cy="1200" r="35" fill="#800080"/>
-  <rect id="obstacle-5" x="200" y="1450" width="50" height="50" fill="#800080"/>
-  <circle id="obstacle-6" cx="300" cy="1650" r="30" fill="#800080"/>
+  <circle id="obstacle-1" cx="300" cy="400" r="30" fill="#000000"/>
+  <circle id="obstacle-2" cx="250" cy="700" r="25" fill="#000000"/>
+  <rect id="obstacle-3" x="280" y="950" width="40" height="60" fill="#000000"/>
+  <circle id="obstacle-4" cx="350" cy="1200" r="35" fill="#000000"/>
+  <rect id="obstacle-5" x="200" y="1450" width="50" height="50" fill="#000000"/>
+  <circle id="obstacle-6" cx="300" cy="1650" r="30" fill="#000000"/>
   
   <!-- Start line (blue) - horizontal at bottom -->
   <rect id="start-line" x="150" y="1890" width="300" height="10" fill="#0000FF"/>

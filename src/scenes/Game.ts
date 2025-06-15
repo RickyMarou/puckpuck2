@@ -105,7 +105,7 @@ export class Game extends Scene {
         this.puck = this.matter.add.sprite(
           track.startPosition.x,
           track.startPosition.y,
-          "pinkstar",
+          "star",
           0,
         );
         this.lastValidPosition = {
@@ -116,7 +116,7 @@ export class Game extends Scene {
         // Default to track center
         const centerX = track.bounds.x + track.bounds.width / 2;
         const centerY = track.bounds.y + track.bounds.height / 2;
-        this.puck = this.matter.add.sprite(centerX, centerY, "pinkstar", 0);
+        this.puck = this.matter.add.sprite(centerX, centerY, "star", 0);
         this.lastValidPosition = { x: centerX, y: centerY };
       }
 

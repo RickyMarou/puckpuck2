@@ -25,7 +25,7 @@ export class Preloader extends Scene {
 
     this.load.image("pinkwall", "1x1_hotpink.png");
 
-    this.load.spritesheet("pinkstar", "sprites/pinkstar_20_45x45.png", {
+    this.load.spritesheet("star", "sprites/rotating_star_20_45x45.png", {
       frameWidth: 45,
       frameHeight: 45,
     });
@@ -36,7 +36,7 @@ export class Preloader extends Scene {
     //  For example, you can define global animations here, so we can use them in other scenes.
     this.anims.create({
       key: "idle",
-      frames: this.anims.generateFrameNumbers("pinkstar", {
+      frames: this.anims.generateFrameNumbers("star", {
         start: 0,
         end: 20,
       }),
