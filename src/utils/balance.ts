@@ -12,12 +12,12 @@
  * Higher values = closer to action, lower values = wider view
  */
 export const CAMERA_ZOOM = {
-  /** Minimum zoom level (maximum zoom out) - also used as default starting zoom */
+  /** Minimum zoom level (maximum zoom out) */
   MIN: 0.3,
   /** Maximum zoom level (maximum zoom in) - achieved when character is stationary */
   MAX: 0.8,
-  /** Default starting zoom level */
-  DEFAULT: 0.3, // Same as MIN for consistent starting experience
+  /** Default starting zoom level - positioned to allow smooth scaling in both directions */
+  DEFAULT: 0.55, // Midpoint between MIN and MAX for smooth linear scaling
 } as const;
 
 // ===== SLINGSHOT CONFIGURATION =====
