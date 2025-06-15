@@ -39,7 +39,7 @@ export class MainMenu extends Scene {
       .on("pointerover", () => playButton.setColor("#ffff00"))
       .on("pointerout", () => playButton.setColor("#ffffff"))
       .on("pointerdown", () => {
-        this.scene.start("Game");
+        this.loadDefaultTrack();
       });
 
     const importButton = this.add
@@ -140,6 +140,55 @@ export class MainMenu extends Scene {
     this.time.delayedCall(5000, () => {
       messageText.destroy();
     });
+  }
+
+  private async loadDefaultTrack() {
+    try {
+      const response = await fetch("assets/tracks/track_straight_test.svg");
+      if (!response.ok) {
+        throw new Error(`Failed to load default track: ${response.statusText}`);
+      }
+
+      const svgText = await response.text();
+
+      const { importTrack, createGameConfig, validateTrackData } = await import(
+        "../utils/track-importer"
+      );
+
+      const gameConfig = createGameConfig(this);
+      const importedTrack = await importTrack(svgText, gameConfig);
+
+      const validation = validateTrackData(importedTrack);
+
+      if (!validation.isValid) {
+        console.error("Default track validation failed:", validation.errors);
+        this.showMessage(
+          `Default track invalid: ${validation.errors.join(", ")}`,
+          "#ff0000",
+        );
+        return;
+      }
+
+      if (validation.warnings.length > 0) {
+        console.warn("Default track warnings:", validation.warnings);
+      }
+
+      console.log("Default track loaded successfully:", importedTrack);
+
+      // Store the track data for launching the game
+      this.registry.set("importedTrack", importedTrack);
+
+      // Start the game immediately
+      this.scene.start("Game");
+    } catch (error) {
+      console.error("Error loading default track:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      this.showMessage(
+        `Failed to load default track: ${errorMessage}`,
+        "#ff0000",
+      );
+    }
   }
 
   private showPlayImportedTrackButton() {

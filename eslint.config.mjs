@@ -24,6 +24,7 @@ export default [
         window: "readonly",
         document: "readonly",
         console: "readonly",
+        fetch: "readonly",
         File: "readonly",
         FileReader: "readonly",
         DOMParser: "readonly",
