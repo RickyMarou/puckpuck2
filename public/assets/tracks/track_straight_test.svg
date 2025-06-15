@@ -33,9 +33,9 @@
   <rect id="obstacle-5" x="200" y="1450" width="50" height="50" fill="#800080"/>
   <circle id="obstacle-6" cx="300" cy="1650" r="30" fill="#800080"/>
   
-  <!-- Start line (blue) - at bottom -->
-  <rect id="start-line" x="150" y="1840" width="300" height="10" fill="#0000FF"/>
+  <!-- Start line (blue) - horizontal at bottom -->
+  <rect id="start-line" x="150" y="1890" width="300" height="10" fill="#0000FF"/>
   
-  <!-- Finish line (gold) - at top -->
-  <rect id="finish-line" x="150" y="150" width="300" height="10" fill="#FFD700"/>
+  <!-- Finish line (gold) - horizontal at top -->
+  <rect id="finish-line" x="150" y="100" width="300" height="10" fill="#FFD700"/>
 </svg>

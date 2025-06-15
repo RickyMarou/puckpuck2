@@ -224,11 +224,12 @@ function createTrackVisuals(track: ImportedTrack, scene: Phaser.Scene): void {
   if (track.startPosition) {
     const startGraphics = scene.add.graphics();
     startGraphics.lineStyle(10, 0x0000ff); // Blue
+    // Draw horizontal line for vertical tracks
     startGraphics.lineBetween(
-      track.startPosition.x - 5,
-      track.bounds.y,
-      track.startPosition.x - 5,
-      track.bounds.y + track.bounds.height,
+      track.bounds.x,
+      track.startPosition.y,
+      track.bounds.x + track.bounds.width,
+      track.startPosition.y,
     );
     startGraphics.setDepth(2);
   }
@@ -236,11 +237,12 @@ function createTrackVisuals(track: ImportedTrack, scene: Phaser.Scene): void {
   if (track.finishPosition) {
     const finishGraphics = scene.add.graphics();
     finishGraphics.lineStyle(10, 0xffd700); // Gold
+    // Draw horizontal line for vertical tracks
     finishGraphics.lineBetween(
-      track.finishPosition.x + 5,
-      track.bounds.y,
-      track.finishPosition.x + 5,
-      track.bounds.y + track.bounds.height,
+      track.bounds.x,
+      track.finishPosition.y,
+      track.bounds.x + track.bounds.width,
+      track.finishPosition.y,
     );
     finishGraphics.setDepth(2);
   }
