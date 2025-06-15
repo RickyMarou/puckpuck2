@@ -137,7 +137,8 @@ export class Game extends Scene {
       }
     }
 
-    this.puck.setCircle(16);
+    this.puck.setScale(1.5); // Increase visual size by 50%
+    this.puck.setCircle(24); // Increase physics radius by 50% (16 * 1.5 = 24)
     this.puck.setBounce(PHYSICS.BOUNCE);
     this.puck.anims.play("idle");
     this.puck.setFrictionAir(PHYSICS.AIR_FRICTION);
