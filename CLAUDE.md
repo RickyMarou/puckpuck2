@@ -191,12 +191,12 @@ Tracks are defined using SVG files with specific color codes for different eleme
 
 ### Color Codes
 
-- **Track Area**: `#00FF00` (green) - Defines in-bounds playable area
+- **Track Area**: `#FFFFFF` (white) - Defines in-bounds playable area
 - **Walls**: `#000000` (black) - Physical barriers that bounce the player
 - **Start Line**: `#0000FF` (blue) - 10px wide line or rect
 - **Finish Line**: `#FFD700` (gold) - 10px wide line or rect
 - **Obstacles**: `#800080` (purple) - Solid elements within the track
-- **Out-of-bounds**: `#FF0000` (red) or absence of track color - Respawn trigger areas
+- **Out-of-bounds**: `#87CEEB` (sky blue) - Respawn trigger areas
 
 ### Implementation Notes
 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="600" height="2000" xmlns="http://www.w3.org/2000/svg" data-size="4000">
-  <!-- Background (out of bounds - default white) -->
-  <rect width="600" height="2000" fill="#FFFFFF"/>
+  <!-- Background (out of bounds - sky blue) -->
+  <rect width="600" height="2000" fill="#87CEEB"/>
   
-  <!-- Track area (green - in bounds) -->
-  <rect id="track-area" x="150" y="100" width="300" height="1800" fill="#00FF00"/>
+  <!-- Track area (white - in bounds) -->
+  <rect id="track-area" x="150" y="100" width="300" height="1800" fill="#FFFFFF"/>
   
   <!-- Walls with holes (black) -->
   <!-- Left wall with gaps -->
